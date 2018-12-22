@@ -6,7 +6,7 @@ from urllib.request import urlopen
 
 
 def set_logger(verbosity, log_to_stdout=False, log_file=None,
-               log_format='%(asctime)s %(levelname)s\t%(message)s'):
+               log_format='%(asctime)s %(levelname)s %(threadName)s\t%(message)s'):
     """ Sets a logger for the micro service
     Args:
         verbosity (int): Level of verbosity for the logger (1,2,3)
@@ -50,7 +50,7 @@ def find_gene_name(title):
 
 def generate_uni_link(id):
     if id is not np.nan:
-        return 'http://www.uniprot.org/uniprot/' + id + '.txt'
+        return 'http://www.uniprot.org/uniprot/' + id
     else:
         return 'N/A'
 
