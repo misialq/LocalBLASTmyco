@@ -1,0 +1,2 @@
+class ConfigNotValid(Exception):
+    pass
