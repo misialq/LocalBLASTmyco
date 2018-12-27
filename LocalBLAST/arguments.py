@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 
 def create_argument_parser():
     arg_parser = ArgumentParser(
-        description='Fill out this description.')
+        description='See below the list of possible arguments.')
     arg_parser.add_argument(
         '-cf',
         '--config-file',

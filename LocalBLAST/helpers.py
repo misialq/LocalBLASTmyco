@@ -49,7 +49,7 @@ def find_gene_name(title):
 
 
 def generate_uni_link(id):
-    if id is not np.nan:
+    if id is not np.nan and id == id:
         return 'http://www.uniprot.org/uniprot/' + id
     else:
         return 'N/A'

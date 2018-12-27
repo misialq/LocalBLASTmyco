@@ -12,7 +12,7 @@ import configobj
 import pkg_resources
 import validate
 import logging
-from multiprocessing.pool import ThreadPool
+from multiprocessing.pool import Pool
 
 import numpy as np
 import pandas as pd
@@ -34,7 +34,8 @@ class LocalSingleBLAST:
     def __init__(self, filename, config, xml_result_loc):
         self.filename = filename
         self.config = config
-        self.thread_id = str(threading.get_ident())
+        #self.thread_id = str(threading.get_ident())
+        self.thread_id = os.getpid()
         self.xml_result_path = os.path.join(xml_result_loc, f'BLAST_temp_result_{self.thread_id}.xml')
         self.blast_dbase = self.config['blastdb']
         self.sequence_len_threshold = self.config['sequence_len_threshold']
@@ -183,6 +184,7 @@ class LocalMultiBLAST:
         self.results_loc = self.config['results_loc']
         if not os.path.isdir(self.results_loc):
             os.mkdir(self.results_loc)
+        self.result_file_path = os.path.join(self.results_loc, 'blast_results_summary.csv')
 
     def gather_files(self):
         self.all_files = glob.glob(os.path.join(self.input_sequences_loc, f'*.{self.input_format}'))
@@ -208,7 +210,16 @@ class LocalMultiBLAST:
                 logger.info('[UniProt] Fetching gene loci...')
                 self.results_df['locus_tag'] = self.results_df['uniprot_link'].progress_apply(get_uniprot_locus)
             self.results_df.reset_index(inplace=True)
-            self.results_df.to_csv(os.path.join(self.results_loc, 'blast_results_summary.csv'))
+
+            # export result but check if file exists
+            if os.path.isfile(self.result_file_path):
+                current_ts = datetime.now().strftime('%Y%m%d%H%M%S')
+                new_filename = f'blast_results_summary_{current_ts}.csv'
+                logger.warning(f'Result file already exists in "{self.results_loc}". '
+                               f'Existing file will be renamed to "{new_filename}"".')
+                os.rename(os.path.join(self.results_loc, 'blast_results_summary.csv'),
+                          os.path.join(self.results_loc, new_filename))
+            self.results_df.to_csv(self.result_file_path)
         else:
             logger.error('No data to generate DataFrame from. Aborting.')
             raise BLASTDataMissing
@@ -216,7 +227,7 @@ class LocalMultiBLAST:
     def run(self):
         self.gather_files()
         if self.file_count:
-            pool = ThreadPool(processes=self.max_thread_count)
+            pool = Pool(processes=self.max_thread_count)
             jobs = [pool.apply_async(self.process_file, (filename,)) for filename in self.all_files]
             while not all([job.ready() for job in jobs]):
                 logger.info('BLASTing - waiting for job completion...')
