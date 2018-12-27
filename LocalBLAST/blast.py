@@ -1,5 +1,6 @@
 import glob
 import pprint
+import shutil
 import threading
 from datetime import datetime, timedelta
 import os
@@ -133,10 +134,12 @@ class LocalSingleBLAST:
 
 
 class LocalMultiBLAST:
-    def __init__(self, config_file):
+    def __init__(self, config_file, use_uniprot, clean_up=False):
         self.timestamp_start = datetime.now()
         self.timestamp_end = None
         self.completion_time = None
+        self.use_uniprot = use_uniprot
+        self.clean_up = clean_up
         logger.info('Initializing BLAST object...')
         self.cwd = os.path.dirname(os.path.realpath(__file__))
         validator = validate.Validator()
@@ -199,10 +202,12 @@ class LocalMultiBLAST:
             self.results_df['uniprot_link'] = self.results_df['uniprot_id'].progress_apply(generate_uni_link)
             self.results_df.fillna('N/A', inplace=True)
             self.results_df.sort_values('filename', ascending=True, inplace=True)
-            logger.info('[UniProt] Fetching protein masses...')
-            self.results_df['mass'] = self.results_df['uniprot_link'].progress_apply(get_uniprot_mass)
-            logger.info('[UniProt] Fetching gene loci...')
-            self.results_df['locus_tag'] = self.results_df['uniprot_link'].progress_apply(get_uniprot_locus)
+            if self.use_uniprot:
+                logger.info('[UniProt] Fetching protein masses...')
+                self.results_df['mass'] = self.results_df['uniprot_link'].progress_apply(get_uniprot_mass)
+                logger.info('[UniProt] Fetching gene loci...')
+                self.results_df['locus_tag'] = self.results_df['uniprot_link'].progress_apply(get_uniprot_locus)
+            self.results_df.reset_index(inplace=True)
             self.results_df.to_csv(os.path.join(self.results_loc, 'blast_results_summary.csv'))
         else:
             logger.error('No data to generate DataFrame from. Aborting.')
@@ -218,6 +223,15 @@ class LocalMultiBLAST:
                 time.sleep(2)
             self.all_blast_results = [job.get() for job in jobs]
         self.generate_df_report()
+
+        # clean up (remove temp BLAST results)
+        if self.clean_up:
+            logger.info('Cleaning up...')
+            if os.path.isdir(self.blast_tmp_dir):
+                shutil.rmtree(self.blast_tmp_dir)
+                logger.info(f'Folder {self.blast_tmp_dir} and all its contents were removed.')
+            else:
+                logger.info(f'Folder {self.blast_tmp_dir} does not exist therefore nothing will be removed.')
 
         self.timestamp_end = datetime.now()
         self.completion_time = (self.timestamp_end - self.timestamp_start) / timedelta(minutes=1)
