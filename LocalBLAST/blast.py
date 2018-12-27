@@ -172,7 +172,7 @@ class LocalMultiBLAST:
         self.ind_err = False
         self.input_sequences_loc = self.config['sequences_loc']
         self.input_format = self.config['input_format'].lower()
-        self.max_thread_count = self.config['max_thread_count']
+        self.max_proc_count = self.config['max_proc_count']
 
         # other inits:
         self.filenames = list()
@@ -227,7 +227,7 @@ class LocalMultiBLAST:
     def run(self):
         self.gather_files()
         if self.file_count:
-            pool = Pool(processes=self.max_thread_count)
+            pool = Pool(processes=self.max_proc_count)
             jobs = [pool.apply_async(self.process_file, (filename,)) for filename in self.all_files]
             while not all([job.ready() for job in jobs]):
                 logger.info('BLASTing - waiting for job completion...')
