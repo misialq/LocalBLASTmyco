@@ -135,26 +135,15 @@ class LocalSingleBLAST:
 
 
 class LocalMultiBLAST:
-    def __init__(self, config_file, use_uniprot, clean_up=False):
+    def __init__(self, args):
         self.timestamp_start = datetime.now()
         self.timestamp_end = None
         self.completion_time = None
-        self.use_uniprot = use_uniprot
-        self.clean_up = clean_up
+        self.use_uniprot = args.use_uniprot
+        self.config = vars(args)
+        self.clean_up = args.clean_up
         logger.info('Initializing BLAST object...')
         self.cwd = os.path.dirname(os.path.realpath(__file__))
-        validator = validate.Validator()
-        if config_file is None:
-            self.config = {}
-        self.config = configobj.ConfigObj(
-            config_file,
-            configspec=pkg_resources.resource_filename(
-                __name__,
-                '../config/LocalBLAST.spec'))
-        self.validated = self.config.validate(validator)
-        if isinstance(self.validated, dict) or not self.validated:
-            logger.error(pprint.pformat(self.validated))
-            raise exceptions.ConfigNotValid('Configuration file contains error')
         if self.cwd != "":
             os.chdir(self.cwd)
 
@@ -247,4 +236,3 @@ class LocalMultiBLAST:
         self.timestamp_end = datetime.now()
         self.completion_time = (self.timestamp_end - self.timestamp_start) / timedelta(minutes=1)
         logger.info('MultiBLAST completed in {:0.1f} minutes'.format(self.completion_time))
-

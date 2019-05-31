@@ -8,7 +8,7 @@ from LocalBLAST.helpers import set_logger
 def run(args):
     logger = set_logger(args.verbosity, log_to_stdout=True)
 
-    local_blast_myco = LocalMultiBLAST(args.config_file, args.use_uniprot, args.temp_clean_up)
+    local_blast_myco = LocalMultiBLAST(args)
     local_blast_myco.run()
 
 

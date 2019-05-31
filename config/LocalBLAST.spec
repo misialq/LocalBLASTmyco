@@ -1,6 +1,0 @@
-sequences_loc = string()
-blastdb = string()
-input_format = string(default='fas')
-blast_engine = option('blastp', 'blastx', 'blastn', default='blastx')
-sequence_len_threshold = integer(min=50, default=100)
-max_proc_count = integer(min=1, max=20, default=2)
