@@ -7,11 +7,6 @@ def create_argument_parser():
     arg_parser = ArgumentParser(
         description='See below the list of possible arguments.')
     arg_parser.add_argument(
-        '-cf',
-        '--config-file',
-        type=str,
-        help='Path to the config file')
-    arg_parser.add_argument(
         '--verbosity',
         '-v',
         type=int,
@@ -51,7 +46,7 @@ def create_argument_parser():
         '-inp',
         type=str,
         default='fas',
-        help='Format of the original sequences that will be submitted to BLAST (default is FAS')
+        help='Format of the original sequences that will be submitted to BLAST (default is FAS)')
     arg_parser.add_argument(
         '--blast-engine',
         '-be',

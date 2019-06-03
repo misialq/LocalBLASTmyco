@@ -1,5 +1,5 @@
 FROM python:3.6.5
-LABEL maintainer "ziomal.mike@gmail.com"
+LABEL maintainer "michal@terrestryal.com"
 
 RUN apt-get update && apt-get install -y wget
 

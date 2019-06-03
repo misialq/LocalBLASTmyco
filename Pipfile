@@ -7,9 +7,8 @@ name = "pypi"
 biopython = "*"
 pandas = "*"
 tqdm = "*"
-configobj = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"

@@ -1,16 +1,10 @@
 import glob
-import pprint
 import shutil
-import threading
 from datetime import datetime, timedelta
 import os
 import time
-import types
 from tqdm import tqdm
 
-import configobj
-import pkg_resources
-import validate
 import logging
 from multiprocessing.pool import Pool
 
