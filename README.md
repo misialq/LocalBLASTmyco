@@ -26,7 +26,7 @@
 | --input-format, -inp | fas | Format of the original sequences that will be submitted to BLAST (default is FAS) |
 | --blast-engine, -be | blastx | BLAST engine to be employed (blastx, blastp, blastn) |
 | --sequence-len-threshold, -slt | 100 | Minimum length of a sequence required for BLAST (shorter sequences will be discarded) |
-| --max-proc-count, -p | 2 | Number of parallel processes to be used') |
+| --max-proc-count, -p | 2 | Number of parallel processes to be used |
 
 
 ## Usage example
@@ -59,6 +59,6 @@ Databases available within the Docker image (under `/blast/db/`):
 
 | DB name | Description |
 |---|---|
-| mycoCDC_proteins_uniprot.fasta | All _M. tuberculosis_ H37Rv proteins |
-| mycoRv_proteins_uniprot.fasta | All _M. tuberculosis_ CDC1551 proteins |
+| mycoCDC_proteins_uniprot.fasta | All _M. tuberculosis_ CDC1551 proteins |
+| mycoRv_proteins_uniprot.fasta | All _M. tuberculosis_ H37Rv proteins |
 | myco_proteins_uniprot.fasta | Combination of the two above |
